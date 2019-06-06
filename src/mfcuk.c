@@ -864,6 +864,12 @@ static bool mfcuk_darkside_select_tag(nfc_device *pnd, int iSleepAtFieldOFF, int
     return false;
   }
 
+  if(ti_tmp.nti.nai.btSak == 0x28) {
+    ti_tmp.nti.nai.btSak = 0x08;
+    // Recolic: HUST StudentCard with SAK 0x28 is fuck-able with M1 ALGORITHM.
+    // Just set it to M1 type.
+  }
+
   memcpy(ti, &ti_tmp, sizeof(ti_tmp));
 
   return true;
