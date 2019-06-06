@@ -1459,6 +1459,10 @@ int main(int argc, char *argv[])
   mfcuk_darkside_reset_advanced(pnd);
 
   // Tag on the reader type
+  if(ti.nm.nmt != NMT_ISO14443A) {
+    ERR("Wrong nfc_modulation_type. See http://www.libnfc.org/api/nfc-types_8h_source.html#l00295 . Expecting 1, got %d", ti.nm.nmt);
+    goto error;
+  }
   tag_on_reader.type = ti.nti.nai.btSak;
   tag_on_reader.tag_basic.amb[0].mbm.btUnknown = ti.nti.nai.btSak;
 
@@ -1505,6 +1509,10 @@ int main(int argc, char *argv[])
 
       // TODO: proper error handling
       block = get_trailer_block_for_sector(crntVerifTagType, i);
+      if(block == MIFARE_CLASSIC_INVALID_BLOCK) {
+        ERR("get_trailer_block_for_sector() failed. Invalid sector.");
+        goto error;
+      }
       ptr_trailer = (mifare_classic_block_trailer *)((char *)(&tag_recover_verify.tag_basic) + (block * MIFARE_CLASSIC_BYTES_PER_BLOCK));
 
       // If DEFAULT KEYS option was specified, crntNumVerifKeys is already taking care of them
